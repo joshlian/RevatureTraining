@@ -28,8 +28,6 @@ public class Main {
                     System.out.println("\nThank you for Listening!");
                     run = false;
             }
-
-        }
-        
+        } 
     }
 }

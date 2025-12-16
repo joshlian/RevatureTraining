@@ -11,4 +11,5 @@ public interface serviceInterface <T, U>{
 
     Optional<U> convertEntityToModel(T entity);
     Optional<U> getModelById(Integer id);
+    List<U> getAllModels();
 }

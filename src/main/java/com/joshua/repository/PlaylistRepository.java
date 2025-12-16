@@ -28,10 +28,10 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
     @Override
     public List <PlaylistEntity> findAll() throws SQLException {
         List <PlaylistEntity> playlist = new ArrayList<>();
-        String sql ="SELECT * FROM Playlist";
+        String sql ="SELECT * FROM Playlist ORDER BY playlistid";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             try(ResultSet rs = stmt.executeQuery()) {
-                while(rs.next()){
+                while(rs.next()){ 
                     PlaylistEntity p = new PlaylistEntity();
                     p.setPlaylistId(rs.getInt("playlistid"));
                     p.setPlaylistName(rs.getString("playlistname"));
@@ -47,11 +47,11 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
         return null;
     }
 
-    public boolean update(Integer id, PlaylistEntity newName) throws SQLException {
+    public boolean update(Integer id, String newName) throws SQLException {
         String sql = "UPDATE playlist SET playlistname = ? WHERE playlistid = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, newName.getPlaylistName());
+            stmt.setString(1, newName);
             stmt.setInt(2, id);
             int rowsAffected =  stmt.executeUpdate();
             return rowsAffected > 0;

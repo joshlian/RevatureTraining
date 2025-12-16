@@ -93,10 +93,7 @@ public class PlaylistController {
             }
             System.out.println("Invalid input!");
         }
-        PlaylistEntity playlistEntity = new PlaylistEntity();
-        playlistEntity.setPlaylistId(id);
-        playlistEntity.setPlaylistName(newPlaylistName);
-        boolean updated = playlistService.update(id, playlistEntity);
+        boolean updated = playlistService.update(id, newPlaylistName);
         if (updated) {
             System.out.println("Playlist successfully updated.");
         } else {

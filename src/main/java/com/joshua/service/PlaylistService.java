@@ -23,7 +23,6 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
             created = playlistRepository.create(playlistEntity);
         } catch (SQLException e) {
             logger.error("could not create playlist in database");
-            e.printStackTrace();
         }
         return created;
     }
@@ -42,7 +41,6 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
             p = playlistRepository.findAll();
         } catch (SQLException e) {
             logger.error("Could not retrieve data from database");
-            e.printStackTrace();
             return List.of();
         }
         return p;
@@ -56,7 +54,6 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
             deleted = playlistRepository.delete(id);
         } catch (SQLException e) {
             logger.error("could not delete from database");
-            e.printStackTrace();
         } 
         return deleted;
     }
@@ -77,6 +74,7 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
         throw new UnsupportedOperationException("Unimplemented method 'getModelById'");
     }
 
+    @Override
     public List<Playlist> getAllModels() {
         List<PlaylistEntity> playlistEntities = getAll();
         List<Playlist> playlists = new ArrayList<>();
@@ -89,13 +87,12 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
         return playlists;
     }
 
-    public boolean update(Integer Id, PlaylistEntity newName) {
+    public boolean update(Integer Id, String newName) {
         boolean updated = false;
         try {
             updated = playlistRepository.update(Id, newName);
         } catch (SQLException e) {
             logger.error("could not update from database");
-            e.printStackTrace();
         }
         return updated;
     }

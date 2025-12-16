@@ -1,7 +1,11 @@
 package com.joshua.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.joshua.repository.entities.SongEntity;
 import com.joshua.service.SongService;
+import com.joshua.service.model.Song;
 import com.joshua.utility.InputHandler;
 
 public class SongController {
@@ -25,16 +29,16 @@ public class SongController {
                     addSongToPlaylist();
                     break;
                 case 2: 
-                    //viewAllSongs();
+                    viewAllSongs();
                     break;
                 case 3: 
-                    //viewSongByID();
+                    viewSongByID();
                     break;
                 case 4:
-                    //updateSongByID();
+                    updateSongByID();
                     break;
                 case 5:
-                    //deleteSongByID()
+                    deleteSongByID();
                     break;
             }
 
@@ -73,12 +77,55 @@ public class SongController {
         SongEntity songEntity = new SongEntity();
         songEntity.setSongName(songName);
         songEntity.setArtistName(artistName);
-        songService.addSong(songEntity);
-        boolean added = songService.addSongtoPlaylist(playlistId, songEntity);
-        if (added) {
-            System.out.println("Song successfully added.");
-        } else {
-            System.out.println("song could not be added.");
+        Integer songID = songService.addSong(songEntity);
+        if (songID == null) {
+            System.err.println("could not access the database");
         }
+        else {
+            songEntity.setSongId(songID);
+            boolean added = songService.addSongtoPlaylist(playlistId, songEntity);
+            if (added) {
+                System.out.println("\nSong successfully added.");
+            } else {
+                System.out.println("\nsong could not be added.");
+            }
+        }
+    }
+
+    public void viewAllSongs() {
+        List <Song> songs = songService.getAllModels();
+        if (songs.isEmpty()) {
+            System.out.println("oops, no song exists, add some now!");
+        }
+        else {
+            System.out.println();
+            for (Song s : songs) {
+                System.out.println(s);
+            }
+        }
+    }
+
+    public void viewSongByID () {
+        Integer id;
+        viewAllSongs();
+        while (true) {
+            id = InputHandler.getIntInput("\nEnter song ID: ");
+            if (id > 0) break;
+            System.out.println("Invalid input! Try again.");
+        }
+        Optional<Song> song = songService.getModelById(id);
+        if(song.isPresent()) {
+            System.out.println("\n" + song.get());
+        }
+        else {
+            System.out.println("\nsong does not exist");
+        }
+    }
+    private void deleteSongByID() {
+    
+    }
+
+    private void updateSongByID() {
+    
     }
 }
