@@ -16,11 +16,11 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
     private static final Logger logger = LoggerFactory.getLogger(PlaylistService.class);
     private final PlaylistRepository playlistRepository = new PlaylistRepository();
     
-    public boolean create(PlaylistEntity playlistEntity)
+    public boolean create(String playlistName)
     {
         boolean created = false;
         try {
-            created = playlistRepository.create(playlistEntity);
+            created = playlistRepository.create(playlistName);
         } catch (SQLException e) {
             logger.error("could not create playlist in database");
         }

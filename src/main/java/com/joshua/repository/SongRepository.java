@@ -16,11 +16,11 @@ public class SongRepository implements RepoInterface <SongEntity>{
     
     private Connection connection = DatabaseConnection.getConnection();
 
-    public Integer findByNames (String name, String artistName) throws SQLException{
+    public Integer findByNames (SongEntity songEntity) throws SQLException{
         String sql = "SELECT songid FROM song WHERE songname = ? AND artistname = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            stmt.setString(2, artistName);
+            stmt.setString(1, songEntity.getSongName());
+            stmt.setString(2, songEntity.getArtistName());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("songid");
@@ -48,12 +48,12 @@ public class SongRepository implements RepoInterface <SongEntity>{
         return generatedId;
     
     }
-    public boolean addSongtoPlaylist(Integer playlistId, SongEntity songEntity) throws SQLException {
+    public boolean addSongtoPlaylist(Integer playlistId, Integer songID) throws SQLException {
 
         String sql = "INSERT INTO PlaylistSong (playlistId, songId) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, playlistId);
-            stmt.setInt(2, songEntity.getSongId());
+            stmt.setInt(2, songID);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0; 
@@ -94,12 +94,27 @@ public class SongRepository implements RepoInterface <SongEntity>{
             }
         }
         return Optional.empty();
-    }
-              
+    }     
 
     @Override
     public boolean delete(Integer id) throws SQLException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
+        String sql = "DELETE FROM Song WHERE songid = (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean update(SongEntity entity) throws SQLException {
+        String sql = "UPDATE song SET songname = (?),artistname = (?) WHERE songid = (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, entity.getSongName());
+            stmt.setString(2, entity.getArtistName());
+            stmt.setInt(3, entity.getSongId());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
     }
 }

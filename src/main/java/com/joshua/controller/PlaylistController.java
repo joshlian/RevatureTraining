@@ -2,7 +2,6 @@ package com.joshua.controller;
 
 import java.util.List;
 
-import com.joshua.repository.entities.PlaylistEntity;
 import com.joshua.service.PlaylistService;
 import com.joshua.utility.InputHandler;
 import com.joshua.service.model.Playlist;
@@ -54,9 +53,7 @@ public class PlaylistController {
             }
             System.out.println("Invalid input!");
         }
-        PlaylistEntity playlistEntity = new PlaylistEntity();
-        playlistEntity.setPlaylistName(playlistName);
-        boolean created = playlistService.create(playlistEntity);
+        boolean created = playlistService.create(playlistName);
         if (created) {
             System.out.println("Playlist successfully created.");
         } else {

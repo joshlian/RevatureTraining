@@ -17,10 +17,13 @@ public class SongService implements serviceInterface <SongEntity, Song> {
     private static final Logger logger = LoggerFactory.getLogger(PlaylistService.class);
     SongRepository songRepository = new SongRepository();
 
-    public Integer addSong(SongEntity songEntity) {
+    public Integer addSong(String songName, String artistName) {
+        SongEntity songEntity = new SongEntity();
+        songEntity.setSongName(songName);
+        songEntity.setArtistName(artistName);
         Integer generatedId = null;
         try {
-            generatedId = songRepository.findByNames(songEntity.getSongName(), songEntity.getArtistName());
+            generatedId = songRepository.findByNames(songEntity);
             if(generatedId == null) {
                 try{
                     generatedId = songRepository.addSong(songEntity);
@@ -37,10 +40,10 @@ public class SongService implements serviceInterface <SongEntity, Song> {
         return generatedId;
     }
 
-    public boolean addSongtoPlaylist (Integer playlistId, SongEntity songEntity) {
+    public boolean addSongtoPlaylist (Integer playlistId, Integer songID) {
         boolean added = false;
         try {
-            added = songRepository.addSongtoPlaylist(playlistId, songEntity);
+            added = songRepository.addSongtoPlaylist(playlistId, songID);
         }catch (SQLException e){
             logger.error("could not insert into playlist due to duplicate or SQL error");
         }
@@ -70,10 +73,27 @@ public class SongService implements serviceInterface <SongEntity, Song> {
         }
     }
 
+    public boolean updateSongByID (Integer id, String songName, String artistName) {
+        SongEntity songEntity = new SongEntity();
+        songEntity.setSongId(id);
+        songEntity.setSongName(songName);
+        songEntity.setArtistName(artistName);
+        try {
+            return songRepository.update(songEntity);
+        } catch (SQLException e) {
+            logger.error("could not update the database due to SQL failure");
+            return false;
+        }
+    }
+
     @Override
     public boolean deletebyId(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deletebyId'");
+        try {
+            return(songRepository.delete(id));
+        }catch (SQLException e) {
+            logger.error("could not delete from the database");
+            return false;
+        }
     }
 
     @Override

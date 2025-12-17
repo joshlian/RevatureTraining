@@ -15,11 +15,11 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
 
     private Connection connection = DatabaseConnection.getConnection();
 
-    public boolean create(PlaylistEntity playlist) throws SQLException {
+    public boolean create(String playlistName) throws SQLException {
         String sql ="INSERT INTO Playlist(playlistname) VALUES (?)";
     
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, playlist.getPlaylistName());
+            stmt.setString(1, playlistName);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }

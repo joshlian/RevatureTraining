@@ -3,7 +3,6 @@ package com.joshua.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.joshua.repository.entities.SongEntity;
 import com.joshua.service.SongService;
 import com.joshua.service.model.Song;
 import com.joshua.utility.InputHandler;
@@ -74,16 +73,12 @@ public class SongController {
             System.out.println("Invalid input! Try again.");
         }
 
-        SongEntity songEntity = new SongEntity();
-        songEntity.setSongName(songName);
-        songEntity.setArtistName(artistName);
-        Integer songID = songService.addSong(songEntity);
+        Integer songID = songService.addSong(songName, artistName);
         if (songID == null) {
             System.err.println("could not access the database");
         }
         else {
-            songEntity.setSongId(songID);
-            boolean added = songService.addSongtoPlaylist(playlistId, songEntity);
+            boolean added = songService.addSongtoPlaylist(playlistId, songID);
             if (added) {
                 System.out.println("\nSong successfully added.");
             } else {
@@ -121,11 +116,54 @@ public class SongController {
             System.out.println("\nsong does not exist");
         }
     }
-    private void deleteSongByID() {
-    
+
+    public void deleteSongByID() {
+        Integer id;
+        viewAllSongs();
+        while (true) {
+            id = InputHandler.getIntInput("\nEnter song ID: ");
+            if (id > 0) break;
+            System.out.println("Invalid input! Try again.");
+        }
+        boolean deleted = songService.deletebyId(id);
+        if(deleted) {
+            System.out.println("\nsong was deleted");
+        }
+        else {
+            System.err.println("\nsong does not exist in database");
+        }
     }
 
-    private void updateSongByID() {
-    
+    public void updateSongByID() {
+        String songName;
+        String artistName;
+        Integer id;
+        viewAllSongs();
+        while (true) {
+            id = InputHandler.getIntInput("\nEnter song ID you want to update: ");
+            if (id > 0) break;
+            System.out.println("Invalid input! Try again.");
+        }
+        while(true) {
+            songName = InputHandler.getStringInput("Enter a new song name: ").trim();
+            if (!songName.isEmpty()) {
+                break;
+            }
+            System.out.println("Invalid input!");
+        }
+        while(true) {
+            artistName = InputHandler.getStringInput("Enter a new artist name: ").trim();
+            if (!artistName.isEmpty()) {
+                break;
+            }
+            System.out.println("Invalid input!");
+        }
+        boolean updated = songService.updateSongByID(id, songName, artistName);
+        if(updated) {
+            System.out.println("\nsong was updated");
+        }
+        else {
+            System.err.println("\nsong does not exist in database");
+        }
     }
 }
