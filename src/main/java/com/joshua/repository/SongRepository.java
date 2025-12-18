@@ -78,7 +78,6 @@ public class SongRepository implements RepoInterface <SongEntity>{
         }
     }
 
-    @Override
     public Optional<SongEntity> findById(Integer id) throws SQLException {
         String sql = "SELECT * FROM Song WHERE songid = (?)";
         SongEntity se = new SongEntity();
@@ -94,15 +93,23 @@ public class SongRepository implements RepoInterface <SongEntity>{
             }
         }
         return Optional.empty();
-    }     
-
-    @Override
-    public boolean delete(Integer id) throws SQLException {
-        String sql = "DELETE FROM Song WHERE songid = (?)";
+    } 
+    
+    public List <SongEntity> findAllByPlaylistId(Integer id) throws SQLException {
+        String sql = "SELECT s.songId, s.songName, s.artistName FROM Song AS s JOIN PlaylistSong AS ps ON s.songId = ps.songId WHERE ps.playlistId = (?) ORDER by s.songId";
+        List <SongEntity> songs = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    SongEntity s = new SongEntity();
+                    s.setSongId(rs.getInt("songId"));
+                    s.setSongName(rs.getString("songName"));
+                    s.setArtistName(rs.getString("artistName"));
+                    songs.add(s);
+                }
+                return songs;
+            }
         }
     }
 
@@ -113,6 +120,16 @@ public class SongRepository implements RepoInterface <SongEntity>{
             stmt.setString(2, entity.getArtistName());
             stmt.setInt(3, entity.getSongId());
 
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    @Override
+    public boolean delete(Integer id) throws SQLException {
+        String sql = "DELETE FROM Song WHERE songid = (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }

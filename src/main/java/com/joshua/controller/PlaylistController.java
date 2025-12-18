@@ -16,12 +16,11 @@ public class PlaylistController {
             System.out.println("\n=== Playlsit Menu ===");
             System.out.println("1.  Create playlist");
             System.out.println("2.  View all playlist");
-            System.out.println("3.  View songs in a playlist");
-            System.out.println("4.  Update playlist");
-            System.out.println("5.  Delete playlists");
-            System.out.println("6.  Exit\n");
+            System.out.println("3.  Update playlist");
+            System.out.println("4.  Delete playlists");
+            System.out.println("5.  Exit\n");
 
-            choice = InputHandler.getIntInput("\nplease enter a number from 1 - 6");
+            choice = InputHandler.getIntInput("\nplease enter a number from 1 - 5");
             switch (choice) {
                 case 1:
                     createPlaylist();
@@ -30,17 +29,14 @@ public class PlaylistController {
                     viewPlaylist();
                     break;
                 case 3: 
-                    //viewSongsinPlaylist();
-                    break;
-                case 4:
                     updatePlaylist();
                     break;
-                case 5:
+                case 4:
                     deletePlaylist();
                     break;
             }
 
-        } while(choice != 6);
+        } while(choice != 5);
     }
  
     //functions for the features of the application 
@@ -55,16 +51,16 @@ public class PlaylistController {
         }
         boolean created = playlistService.create(playlistName);
         if (created) {
-            System.out.println("Playlist successfully created.");
+            System.out.println("\nPlaylist successfully created.");
         } else {
-            System.out.println("Playlist creation failed.");
+            System.out.println("\nPlaylist creation failed.");
         }
     }
    
     public void viewPlaylist() {
         List<Playlist> playlist = playlistService.getAllModels();
         if (playlist.isEmpty()) {
-            System.out.println("No Playlist yet, Add some now!");
+            System.out.println("\nNo Playlist yet, Add some now!");
             return;
         }
         System.out.println();
@@ -92,15 +88,15 @@ public class PlaylistController {
         }
         boolean updated = playlistService.update(id, newPlaylistName);
         if (updated) {
-            System.out.println("Playlist successfully updated.");
+            System.out.println("\nPlaylist successfully updated.");
         } else {
-            System.out.println("Playlist ID not found or update failed.");
+            System.out.println("\nPlaylist ID not found");
         }
     }
 
     public void deletePlaylist() {
         viewPlaylist();
-        int id;
+        Integer id;
         while (true) {
             id = InputHandler.getIntInput("\nEnter playlist ID: ");
             if (id > 0) break;
@@ -108,9 +104,9 @@ public class PlaylistController {
         }
         boolean deleted = playlistService.deletebyId(id);
         if (deleted) {
-            System.out.println("Playlist successfully deleted.");
+            System.out.println("\nPlaylist successfully deleted.");
         } else {
-            System.out.println("Playlist ID not found or deletion failed.");
+            System.out.println("\nPlaylist ID not found");
         }
     }
 }

@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.joshua.repository.PlaylistRepository;
-import com.joshua.repository.entities.PlaylistEntity; 
+import com.joshua.repository.entities.PlaylistEntity;
 import com.joshua.service.model.Playlist;
 
 public class PlaylistService implements serviceInterface <PlaylistEntity, Playlist>{
@@ -22,30 +22,20 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
         try {
             created = playlistRepository.create(playlistName);
         } catch (SQLException e) {
-            logger.error("could not create playlist in database");
+            logger.error("could not create playlist in database due to SQL error");
         }
         return created;
     }
 
-
-    @Override
-    public Optional<PlaylistEntity> getById(Integer id) {
-        return null;
-    }
-
-
     @Override
     public List<PlaylistEntity> getAll() {
-        List<PlaylistEntity> p;
         try {
-            p = playlistRepository.findAll();
+             return playlistRepository.findAll();
         } catch (SQLException e) {
-            logger.error("Could not retrieve data from database");
+            logger.error("Could not retrieve data from database due to SQL error");
             return List.of();
         }
-        return p;
     }
-
 
     @Override
     public boolean deletebyId(Integer id) {
@@ -53,11 +43,10 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
         try {
             deleted = playlistRepository.delete(id);
         } catch (SQLException e) {
-            logger.error("could not delete from database");
+            logger.error("could not delete from database due to SQL error");
         } 
         return deleted;
     }
-
 
     @Override
     public Optional<Playlist> convertEntityToModel(PlaylistEntity entity) {
@@ -65,13 +54,6 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
         playlist.setId(entity.getPlaylistId());
         playlist.setName(entity.getPlaylistName());
         return Optional.of(playlist);
-    }
-
-
-    @Override
-    public Optional<Playlist> getModelById(Integer id) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'getModelById'");
     }
 
     @Override
@@ -88,11 +70,14 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
     }
 
     public boolean update(Integer Id, String newName) {
+        PlaylistEntity playlistEntity = new PlaylistEntity();
+        playlistEntity.setPlaylistId(Id);
+        playlistEntity.setPlaylistName(newName);
         boolean updated = false;
         try {
-            updated = playlistRepository.update(Id, newName);
+            updated = playlistRepository.update(playlistEntity);
         } catch (SQLException e) {
-            logger.error("could not update from database");
+            logger.error("could not update from database due to SQL error");
         }
         return updated;
     }

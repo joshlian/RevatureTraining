@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.joshua.repository.entities.PlaylistEntity;
 import com.joshua.utility.DatabaseConnection;
@@ -43,16 +42,12 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
     }
 
     @Override
-    public Optional <PlaylistEntity> findById(Integer id) throws SQLException {
-        return null;
-    }
-
-    public boolean update(Integer id, String newName) throws SQLException {
+    public boolean update(PlaylistEntity playlistEntity) throws SQLException {
         String sql = "UPDATE playlist SET playlistname = ? WHERE playlistid = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, newName);
-            stmt.setInt(2, id);
+            stmt.setString(1, playlistEntity.getPlaylistName());
+            stmt.setInt(2, playlistEntity.getPlaylistId());
             int rowsAffected =  stmt.executeUpdate();
             return rowsAffected > 0;
         }

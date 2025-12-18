@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.joshua.service.SongService;
+import com.joshua.service.model.Playlist;
 import com.joshua.service.model.Song;
 import com.joshua.utility.InputHandler;
 
@@ -18,11 +19,12 @@ public class SongController {
             System.out.println("1.  Add song to playlist");
             System.out.println("2.  View all songs");
             System.out.println("3.  View song by ID");
-            System.out.println("4.  Update song by ID");
-            System.out.println("5.  Delete song by ID");
-            System.out.println("6.  Exit\n");
+            System.out.println("4.  View songs in a playlist");
+            System.out.println("5.  Update song by ID");
+            System.out.println("6.  Delete song by ID");
+            System.out.println("7.  Exit\n");
 
-            choice = InputHandler.getIntInput("\nplease enter a number from 1 - 6");
+            choice = InputHandler.getIntInput("\nplease enter a number from 1 - 7");
             switch (choice) {
                 case 1:
                     addSongToPlaylist();
@@ -34,14 +36,16 @@ public class SongController {
                     viewSongByID();
                     break;
                 case 4:
-                    updateSongByID();
+                    viewSongsinPlaylist();
                     break;
                 case 5:
-                    deleteSongByID();
+                    updateSongByID();
                     break;
+                case 6:
+                    deleteSongByID();
             }
 
-        } while(choice != 6);
+        } while(choice != 7);
     }
 
     //song functions 
@@ -66,7 +70,6 @@ public class SongController {
 
         PlaylistController plc = new PlaylistController();
         plc.viewPlaylist();
-
         while (true) {
             playlistId = InputHandler.getIntInput("\nEnter playlist ID: ");
             if (playlistId > 0) break;
@@ -75,14 +78,14 @@ public class SongController {
 
         Integer songID = songService.addSong(songName, artistName);
         if (songID == null) {
-            System.err.println("could not access the database");
+            System.err.println("Could not add song to the database");
         }
         else {
             boolean added = songService.addSongtoPlaylist(playlistId, songID);
             if (added) {
                 System.out.println("\nSong successfully added.");
             } else {
-                System.out.println("\nsong could not be added.");
+                System.out.println("\nSong already in that playlist or playlist does not exist.");
             }
         }
     }
@@ -90,7 +93,7 @@ public class SongController {
     public void viewAllSongs() {
         List <Song> songs = songService.getAllModels();
         if (songs.isEmpty()) {
-            System.out.println("oops, no song exists, add some now!");
+            System.out.println("\nNo song exists, add some now!");
         }
         else {
             System.out.println();
@@ -113,24 +116,30 @@ public class SongController {
             System.out.println("\n" + song.get());
         }
         else {
-            System.out.println("\nsong does not exist");
+            System.out.println("\nSong does not exist");
         }
     }
 
-    public void deleteSongByID() {
+    public void viewSongsinPlaylist () {
+        PlaylistController plc = new PlaylistController();
+        plc.viewPlaylist();
         Integer id;
-        viewAllSongs();
         while (true) {
-            id = InputHandler.getIntInput("\nEnter song ID: ");
+            id = InputHandler.getIntInput("\nEnter playlist ID you want to view: ");
             if (id > 0) break;
             System.out.println("Invalid input! Try again.");
         }
-        boolean deleted = songService.deletebyId(id);
-        if(deleted) {
-            System.out.println("\nsong was deleted");
+        Playlist playlist = new Playlist();
+        playlist = songService.getSongsByPlaylsitId(id);
+        if(playlist.getSongs().isEmpty())
+        {
+            System.out.println("\nSongs or playlist does not exist in playlist ID " +playlist.getId());
         }
         else {
-            System.err.println("\nsong does not exist in database");
+            System.out.println("\nSongs for playlist ID " + playlist.getId() + "\n");
+            for (Song s : playlist.getSongs()) {
+            System.out.println(s);
+            }
         }
     }
 
@@ -160,10 +169,27 @@ public class SongController {
         }
         boolean updated = songService.updateSongByID(id, songName, artistName);
         if(updated) {
-            System.out.println("\nsong was updated");
+            System.out.println("\nSong was updated");
         }
         else {
-            System.err.println("\nsong does not exist in database");
+            System.err.println("\nSong does not exist in database");
+        }
+    }
+
+    public void deleteSongByID() {
+        Integer id;
+        viewAllSongs();
+        while (true) {
+            id = InputHandler.getIntInput("\nEnter song ID: ");
+            if (id > 0) break;
+            System.out.println("Invalid input! Try again.");
+        }
+        boolean deleted = songService.deletebyId(id);
+        if(deleted) {
+            System.out.println("\nSong was deleted");
+        }
+        else {
+            System.err.println("\nSong does not exist in database");
         }
     }
 }
