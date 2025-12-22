@@ -61,7 +61,7 @@ public class SongRepository implements RepoInterface <SongEntity>{
     }
 
     @Override
-    public List<SongEntity> findAll() throws SQLException {
+    public List<SongEntity> getAll() throws SQLException {
         String sql = "SELECT * FROM Song ORDER BY songid";
         List<SongEntity> songs = new ArrayList<>();
         try(PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class SongRepository implements RepoInterface <SongEntity>{
         }
     }
 
-    public Optional<SongEntity> findById(Integer id) throws SQLException {
+    public Optional<SongEntity> getById(Integer id) throws SQLException {
         String sql = "SELECT * FROM Song WHERE songid = (?)";
         SongEntity se = new SongEntity();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -95,7 +95,7 @@ public class SongRepository implements RepoInterface <SongEntity>{
         return Optional.empty();
     } 
     
-    public List <SongEntity> findAllByPlaylistId(Integer id) throws SQLException {
+    public List <SongEntity> getSongsByPlaylsitId(Integer id) throws SQLException {
         String sql = "SELECT s.songId, s.songName, s.artistName FROM Song AS s JOIN PlaylistSong AS ps ON s.songId = ps.songId WHERE ps.playlistId = (?) ORDER by s.songId";
         List <SongEntity> songs = new ArrayList<>();
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -113,6 +113,7 @@ public class SongRepository implements RepoInterface <SongEntity>{
         }
     }
 
+    @Override
     public boolean update(SongEntity entity) throws SQLException {
         String sql = "UPDATE song SET songname = (?),artistname = (?) WHERE songid = (?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -126,10 +127,20 @@ public class SongRepository implements RepoInterface <SongEntity>{
     }
 
     @Override
-    public boolean delete(Integer id) throws SQLException {
+    public boolean deletebyId(Integer id) throws SQLException {
         String sql = "DELETE FROM Song WHERE songid = (?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    public boolean deleteSongInPlaylist (Integer songId, Integer playlistId) throws SQLException{
+        String sql = "DELETE FROM Playlistsong WHERE playlistId = ? AND songId = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, playlistId);
+            stmt.setInt(2, songId);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         }

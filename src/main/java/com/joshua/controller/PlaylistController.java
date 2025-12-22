@@ -2,12 +2,19 @@ package com.joshua.controller;
 
 import java.util.List;
 
+import com.joshua.repository.PlaylistRepository;
 import com.joshua.service.PlaylistService;
 import com.joshua.utility.InputHandler;
 import com.joshua.service.model.Playlist;
 
 public class PlaylistController {
-    private final PlaylistService playlistService = new PlaylistService();
+    
+    //passing in an instatition so we can mock it 
+    private final PlaylistService playlistService;
+    public PlaylistController() {
+        PlaylistRepository playlistRepository = new PlaylistRepository();
+        playlistService = new PlaylistService(playlistRepository);
+    }
 
     int choice = 0;
     public void start() {
@@ -55,23 +62,25 @@ public class PlaylistController {
         } else {
             System.out.println("\nPlaylist creation failed.");
         }
-    }
+    }  
    
-    public void viewPlaylist() {
+    public boolean viewPlaylist() {
         List<Playlist> playlist = playlistService.getAllModels();
         if (playlist.isEmpty()) {
             System.out.println("\nNo Playlist yet, Add some now!");
-            return;
+            return false;
         }
         System.out.println();
         for (Playlist p : playlist){
             System.out.println(p);
         }
+        return true;
     }
 
     public void updatePlaylist() {
-        viewPlaylist();
-        
+        boolean exist = viewPlaylist();
+        if (!exist) {return;}
+
         Integer id;
         String newPlaylistName;
         while (true) {
@@ -90,12 +99,14 @@ public class PlaylistController {
         if (updated) {
             System.out.println("\nPlaylist successfully updated.");
         } else {
-            System.out.println("\nPlaylist ID not found");
+            System.out.println("\nNo Playlist found");
         }
     }
 
     public void deletePlaylist() {
-        viewPlaylist();
+        boolean exist = viewPlaylist();
+        if (!exist) {return;}
+        
         Integer id;
         while (true) {
             id = InputHandler.getIntInput("\nEnter playlist ID: ");

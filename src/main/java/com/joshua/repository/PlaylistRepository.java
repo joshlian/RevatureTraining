@@ -25,7 +25,7 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
     }
 
     @Override
-    public List <PlaylistEntity> findAll() throws SQLException {
+    public List <PlaylistEntity> getAll() throws SQLException {
         List <PlaylistEntity> playlist = new ArrayList<>();
         String sql ="SELECT * FROM Playlist ORDER BY playlistid";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -54,7 +54,7 @@ public class PlaylistRepository implements RepoInterface <PlaylistEntity>{
     }
 
     @Override
-    public boolean delete(Integer id) throws SQLException {
+    public boolean deletebyId(Integer id) throws SQLException {
         String sql ="DELETE FROM Playlist WHERE playlistid = (?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);

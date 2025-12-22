@@ -14,11 +14,15 @@ import com.joshua.service.model.Playlist;
 
 public class PlaylistService implements serviceInterface <PlaylistEntity, Playlist>{
     private static final Logger logger = LoggerFactory.getLogger(PlaylistService.class);
-    private final PlaylistRepository playlistRepository = new PlaylistRepository();
+    private final PlaylistRepository playlistRepository;
+
+    public PlaylistService(PlaylistRepository playlistRepository) {
+        this.playlistRepository = playlistRepository;
+    } 
     
     public boolean create(String playlistName)
     {
-        boolean created = false;
+        boolean created = false; 
         try {
             created = playlistRepository.create(playlistName);
         } catch (SQLException e) {
@@ -30,7 +34,7 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
     @Override
     public List<PlaylistEntity> getAll() {
         try {
-             return playlistRepository.findAll();
+             return playlistRepository.getAll();
         } catch (SQLException e) {
             logger.error("Could not retrieve data from database due to SQL error");
             return List.of();
@@ -41,7 +45,7 @@ public class PlaylistService implements serviceInterface <PlaylistEntity, Playli
     public boolean deletebyId(Integer id) {
         boolean deleted = false;
         try {
-            deleted = playlistRepository.delete(id);
+            deleted = playlistRepository.deletebyId(id);
         } catch (SQLException e) {
             logger.error("could not delete from database due to SQL error");
         } 

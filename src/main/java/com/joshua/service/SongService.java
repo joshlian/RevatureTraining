@@ -11,12 +11,16 @@ import org.slf4j.LoggerFactory;
 import com.joshua.repository.SongRepository;
 import com.joshua.repository.entities.SongEntity;
 import com.joshua.service.model.Playlist;
-import com.joshua.service.model.Song;
+import com.joshua.service.model.Song; 
 
-
+ 
 public class SongService implements serviceInterface <SongEntity, Song> {
     private static final Logger logger = LoggerFactory.getLogger(PlaylistService.class);
-    SongRepository songRepository = new SongRepository();
+    private final SongRepository songRepository;
+
+    public SongService (SongRepository songRepository) {
+        this.songRepository = songRepository;
+    }
 
     public Integer addSong(String songName, String artistName) {
         SongEntity songEntity = new SongEntity();
@@ -29,11 +33,11 @@ public class SongService implements serviceInterface <SongEntity, Song> {
                 try{
                     generatedId = songRepository.addSong(songEntity);
                 }catch(SQLException e) {
-                    logger.error("could not add into song due to duplicate or SQL error");
+                    logger.error("could not add into song due to SQL error");
                 }
             }
             else {
-                return generatedId;
+                return generatedId; 
             }
         }catch (SQLException e){
             logger.error("could not look through song table due to SQL error");
@@ -54,7 +58,7 @@ public class SongService implements serviceInterface <SongEntity, Song> {
     @Override
     public List<SongEntity> getAll() {
         try {
-            List<SongEntity> songs = songRepository.findAll();
+            List<SongEntity> songs = songRepository.getAll();
             return songs;
         }catch(SQLException e) {
             logger.error("could not access database to retrieve songs");
@@ -77,7 +81,7 @@ public class SongService implements serviceInterface <SongEntity, Song> {
 
     public Optional<SongEntity> getById(Integer id) {
         try {
-            Optional<SongEntity> songEntity = songRepository.findById(id);
+            Optional<SongEntity> songEntity = songRepository.getById(id);
             return songEntity;
         }catch (SQLException e) {
             logger.error("could not get song from database");
@@ -100,7 +104,7 @@ public class SongService implements serviceInterface <SongEntity, Song> {
         Playlist playlist = new Playlist();
         List <Song> songs = new ArrayList<>();
         try {
-            List <SongEntity> songEntities = songRepository.findAllByPlaylistId(id);
+            List <SongEntity> songEntities = songRepository.getSongsByPlaylsitId(id);
             for(SongEntity song : songEntities) {
                 Optional <Song> S = convertEntityToModel(song);
                 if(S.isPresent()) {
@@ -112,11 +116,12 @@ public class SongService implements serviceInterface <SongEntity, Song> {
             return playlist;
         }catch (SQLException e) {
             logger.error("could not get list of songs in database");
-            return new Playlist();
+            playlist.setSongs(songs);
+            return playlist;
         }
     }
 
-    public boolean updateSongByID (Integer id, String songName, String artistName) {
+    public boolean update (Integer id, String songName, String artistName) {
         SongEntity songEntity = new SongEntity();
         songEntity.setSongId(id);
         songEntity.setSongName(songName);
@@ -129,17 +134,26 @@ public class SongService implements serviceInterface <SongEntity, Song> {
         }
     }
 
-    @Override
+    @Override 
     public boolean deletebyId(Integer id) {
         try {
-            return(songRepository.delete(id));
+            return(songRepository.deletebyId(id));
         }catch (SQLException e) {
-            logger.error("could not delete from the database");
+            logger.error("could not delete from the database due to SQL errror");
             return false;
         }
     }
 
-    @Override
+    public boolean deleteSongInPlaylist(Integer songId, Integer playlistId) {
+        try {
+            return songRepository.deleteSongInPlaylist(songId , playlistId);
+        } catch (SQLException e) {
+            logger.error("Could not delete from database use to SQL error");
+            return false;
+        }
+    }
+
+    @Override 
     public Optional<Song> convertEntityToModel(SongEntity entity) {
         Song song = new Song();
         song.setId(entity.getSongId());
