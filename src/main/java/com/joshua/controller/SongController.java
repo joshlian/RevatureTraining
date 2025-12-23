@@ -63,18 +63,19 @@ public class SongController {
 
     //song functions 
     public void addSongToPlaylist() {
+
         String songName;
         String artistName;
         Integer playlistId = 0;
         while(true) {
-            songName = InputHandler.getStringInput("Enter song name: ").trim();
+            songName = InputHandler.getStringInput("Enter song name: ").trim().toLowerCase();
             if (!songName.isEmpty()) {
                 break;
             }
             System.out.println("Invalid input!");
         }
         while(true) {
-            artistName = InputHandler.getStringInput("Enter artist name: ").trim();
+            artistName = InputHandler.getStringInput("Enter artist name: ").trim().toLowerCase();;
             if (!artistName.isEmpty()) {
                 break;
             } 
@@ -172,14 +173,14 @@ public class SongController {
             System.out.println("Invalid input! Try again.");
         }
         while(true) {
-            songName = InputHandler.getStringInput("Enter a new song name: ").trim();
+            songName = InputHandler.getStringInput("Enter a new song name: ").trim().toLowerCase();
             if (!songName.isEmpty()) {
                 break;
             }
             System.out.println("Invalid input!");
         }
         while(true) {
-            artistName = InputHandler.getStringInput("Enter a new artist name: ").trim();
+            artistName = InputHandler.getStringInput("Enter a new artist name: ").trim().toLowerCase();
             if (!artistName.isEmpty()) {
                 break;
             }

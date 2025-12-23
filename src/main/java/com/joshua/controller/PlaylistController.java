@@ -46,11 +46,12 @@ public class PlaylistController {
         } while(choice != 5);
     }
  
-    //functions for the features of the application 
+    //functions for the features of the application
+
     public void createPlaylist() {
         String playlistName;
         while(true) {
-            playlistName = InputHandler.getStringInput("Enter new playlist name: ").trim();
+            playlistName = InputHandler.getStringInput("Enter new playlist name: ").trim().toLowerCase();;
             if (!playlistName.isEmpty()) {
                 break;
             }
@@ -89,7 +90,7 @@ public class PlaylistController {
             System.out.println("Invalid input! Try again.");
         }
         while(true) {
-            newPlaylistName = InputHandler.getStringInput("Enter new playlist name: ").trim();
+            newPlaylistName = InputHandler.getStringInput("Enter new playlist name: ").trim().toLowerCase();
             if (!newPlaylistName.isEmpty()) {
                 break;
             }

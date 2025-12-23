@@ -6,8 +6,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DatabaseConnection {
 
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseConnection.class);
     private static Connection connection;
     private static final Properties properties = new Properties();
 
@@ -39,6 +43,7 @@ public class DatabaseConnection {
             }
             return connection;
         } catch (SQLException e) {
+            logger.error("could not connect to the database");
             throw new RuntimeException("Failed to obtain DB connection", e);
         }
     }
