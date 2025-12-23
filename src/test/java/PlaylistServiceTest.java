@@ -61,6 +61,14 @@ public class PlaylistServiceTest {
     }
 
     @Test
+    void create_reallyLongname_ReturnsTrue() throws SQLException {
+        when(playlistRepository.create("hihisndisndisndsknsjdkjsn7s9dnsds90dsbdsu0dsjhd8js0d9sjd9hs89hds89hds9hdsjdhsuidhsuid")).thenReturn(true);
+        boolean result = playlistService.create("hihisndisndisndsknsjdkjsn7s9dnsds90dsbdsu0dsjhd8js0d9sjd9hs89hds89hds9hdsjdhsuidhsuid");
+        assertTrue(result);
+        verify(playlistRepository, times(1)).create("hihisndisndisndsknsjdkjsn7s9dnsds90dsbdsu0dsjhd8js0d9sjd9hs89hds89hds9hdsjdhsuidhsuid");
+    }
+
+    @Test
     void get_Success_ReturnList() throws SQLException {
         when(playlistRepository.getAll()).thenReturn(mockList);
         List<Playlist> result = playlistService.getAllModels();
