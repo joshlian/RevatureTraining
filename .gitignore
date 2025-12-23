@@ -1,0 +1,12 @@
+# Logs
+logs/
+*.log
+
+# Database credentials
+db.properties
+
+# (Optional) IDE / OS junk
+.idea/
+.vscode/
+*.iml
+.DS_Store
